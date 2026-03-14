@@ -1,35 +1,31 @@
 name: Android Build
 
 on:
-  push:
-    branches: [ main ]
+ push:
+  branches: [ main ]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+ build:
+  runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v4
+  steps:
+   - uses: actions/checkout@v4
 
-      - name: Setup JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
+   - name: Setup JDK
+     uses: actions/setup-java@v4
+     with:
+      distribution: temurin
+      java-version: 17
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+   - name: Install Gradle
+     run: |
+      wget https://services.gradle.org/distributions/gradle-8.5-bin.zip
+      unzip gradle-8.5-bin.zip
+      export PATH=$PWD/gradle-8.5/bin:$PATH
+      gradle -p android assembleDebug
 
-      - name: Setup Gradle 8
-        uses: gradle/gradle-build-action@v2
-        with:
-          gradle-version: 8.5
-
-      - name: Build APK
-        run: gradle assembleDebug
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: sms-gateway-apk
-          path: app/build/outputs/apk/debug/
+   - name: Upload APK
+     uses: actions/upload-artifact@v4
+     with:
+      name: sms-gateway-apk
+      path: android/app/build/outputs/apk/debug/
